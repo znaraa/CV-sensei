@@ -47,6 +47,7 @@ export const cvSchema = z.object({
     other: z.string().optional(),
   }),
   goals: z.string().min(1, 'Career goals are required'),
+  personalInterests: z.string().optional(),
 });
 
 export type CvFormValues = z.infer<typeof cvSchema>;

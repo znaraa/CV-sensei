@@ -36,6 +36,7 @@ const GenerateInitialCvDraftInputSchema = z.object({
   })).describe('Work experience of the user.'),
   skills: z.array(z.string()).describe('Skills of the user.'),
   goals: z.string().describe('Career goals of the user.'),
+  personalInterests: z.string().optional().describe('Personal interests, hobbies, and personality traits of the user.'),
 });
 
 export type GenerateInitialCvDraftInput = z.infer<typeof GenerateInitialCvDraftInputSchema>;
@@ -87,6 +88,10 @@ const generateCvDraftPrompt = ai.definePrompt({
   Skills: {{skills}}
 
   Career Goals: {{{goals}}}
+
+  {{#if personalInterests}}
+  Personal Interests & Personality: {{{personalInterests}}}
+  {{/if}}
 
   Please provide the 履歴書 (Rirekisho) and 職務経歴書 (Shokumu Keirekisho) drafts in a well-formatted, professional manner.
 

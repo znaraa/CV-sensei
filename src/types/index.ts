@@ -40,6 +40,7 @@ export type Resume = {
   experience: Omit<Experience, 'id'>[];
   skills: Skills;
   goals: string;
+  personalInterests?: string;
   rirekisho?: string;
   shokumuKeirekisho?: string;
   createdAt: Timestamp;

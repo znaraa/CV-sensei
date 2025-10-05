@@ -26,6 +26,7 @@ const processCvData = (data: CvFormValues, userId: string) => {
     experience: data.experience,
     skills: allSkills,
     goals: data.goals,
+    personalInterests: data.personalInterests,
   };
 
   const firestoreData = {

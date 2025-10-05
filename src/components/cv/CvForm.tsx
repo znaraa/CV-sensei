@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { PlusCircle, Trash2, Loader2, Briefcase, User, GraduationCap, Building2, Lightbulb, Target, Wand2 } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2, Briefcase, User, GraduationCap, Building2, Lightbulb, Target, Wand2, Smile } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createCvAction, updateCvAction, suggestSkillsAction } from '@/actions/cv';
 import { useAuth } from '@/hooks/use-auth';
@@ -44,6 +44,7 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
       experience: [],
       skills: { selected: [], other: '' },
       goals: '',
+      personalInterests: '',
     },
   });
 
@@ -369,6 +370,34 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
                         <Textarea placeholder="Describe your career aspirations, strengths, and what you want to achieve." {...field} rows={5} />
                       </FormControl>
                       <FormDescription>This will be used for the self-promotion section of your CV.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+          
+          {/* Personal Interests */}
+          <AccordionItem value="personal-interests">
+            <Card>
+              <AccordionTrigger className="p-6 font-headline text-lg">
+                <div className="flex items-center">
+                  <Smile className="mr-2 h-5 w-5" />
+                  <span>Personal Interests (Optional)</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-6 pt-0">
+                <FormField
+                  control={form.control}
+                  name="personalInterests"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Personality, Hobbies, etc.</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Describe your personality, hobbies, or things you are passionate about." {...field} rows={5} />
+                      </FormControl>
+                      <FormDescription>This can help recruiters understand you better as a person.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

@@ -34,7 +34,6 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
   const form = useForm<CvFormValues>({
     resolver: zodResolver(cvSchema),
     defaultValues: defaultValues || {
-      title: '',
       personalInfo: { name: '', email: '', phone: '', address: '' },
       education: [{ institution: '', degree: '', major: '', graduationDate: '' }],
       experience: [],
@@ -89,28 +88,6 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className='font-headline'>CV Title</CardTitle>
-            <CardDescription>Give a name to this CV for your own reference.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Application for Software Engineer" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
         <Accordion type="multiple" defaultValue={['personal-info', 'education', 'skills', 'goals']} className="w-full space-y-4">
           
           {/* Personal Information */}

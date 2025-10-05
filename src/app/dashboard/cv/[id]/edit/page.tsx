@@ -74,7 +74,6 @@ export default function EditCvPage() {
 
   if (resume) {
     const defaultValues: CvFormValues = {
-        title: resume.title,
         personalInfo: resume.personalInfo,
         education: resume.education,
         experience: resume.experience,

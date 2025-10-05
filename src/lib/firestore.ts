@@ -19,6 +19,7 @@ const resumesCollection = collection(db, 'resumes');
 export const addResume = async (resumeData: Omit<Resume, 'id' | 'createdAt' | 'updatedAt'>) => {
   const docRef = await addDoc(resumesCollection, {
     ...resumeData,
+    title: `CV for ${resumeData.personalInfo.name}`,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -54,7 +55,10 @@ export const getResume = async (id: string): Promise<Resume | null> => {
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    return { id: docSnap.id, ...docSnap.data() } as Resume;
+    const data = docSnap.data();
+    // For backwards compatibility with old data that might not have a title
+    const title = data.title || `CV for ${data.personalInfo.name}`;
+    return { id: docSnap.id, ...data, title } as Resume;
   } else {
     return null;
   }

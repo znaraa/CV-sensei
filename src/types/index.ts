@@ -32,7 +32,6 @@ export type Skills = {
 export type Resume = {
   id?: string;
   userId: string;
-  title: string;
   personalInfo: PersonalInfo;
   education: Omit<Education, 'id'>[];
   experience: Omit<Experience, 'id'>[];

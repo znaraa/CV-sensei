@@ -31,7 +31,6 @@ const experienceSchema = z.object({
 });
 
 export const cvSchema = z.object({
-  title: z.string().min(1, 'CV title is required'),
   personalInfo: z.object({
     name: z.string().min(1, 'Full name is required'),
     email: z.string().email('Invalid email address'),

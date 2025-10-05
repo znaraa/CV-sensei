@@ -20,6 +20,7 @@ const GenerateInitialCvDraftInputSchema = z.object({
     dob: z.string().describe('The date of birth of the user.'),
     gender: z.string().describe('The gender of the user.'),
   }).describe('Personal information of the user'),
+  jobTitle: z.string().describe("The job title the user is applying for."),
   education: z.array(z.object({
     institution: z.string().describe('The name of the educational institution.'),
     degree: z.string().describe('The degree obtained.'),
@@ -56,7 +57,7 @@ const generateCvDraftPrompt = ai.definePrompt({
   output: {schema: GenerateInitialCvDraftOutputSchema},
   prompt: `You are an expert in creating 履歴書 (Rirekisho) and 職務経歴書 (Shokumu Keirekisho) in the Japanese format.
 
-  Based on the following information, generate a draft of both documents.
+  Based on the following information, generate a draft of both documents for a person applying for the position of {{{jobTitle}}}.
 
   Personal Information:
   Name: {{{personalInfo.name}}}

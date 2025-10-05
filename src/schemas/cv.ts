@@ -39,6 +39,7 @@ export const cvSchema = z.object({
     dob: z.string().min(1, 'Date of birth is required'),
     gender: z.enum(['male', 'female', 'other']),
   }),
+  jobTitle: z.string().min(1, 'Job title is required'),
   education: z.array(educationSchema).min(1, 'At least one education entry is required'),
   experience: z.array(experienceSchema),
   skills: z.object({

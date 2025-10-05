@@ -35,6 +35,7 @@ export type Resume = {
   id?: string;
   userId: string;
   personalInfo: PersonalInfo;
+  jobTitle: string;
   education: Omit<Education, 'id'>[];
   experience: Omit<Experience, 'id'>[];
   skills: Skills;

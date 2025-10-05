@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { PlusCircle, Trash2, Loader2 } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2, Briefcase } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createCvAction, updateCvAction } from '@/actions/cv';
 import { useAuth } from '@/hooks/use-auth';
@@ -36,6 +36,7 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
     resolver: zodResolver(cvSchema),
     defaultValues: defaultValues || {
       personalInfo: { name: '', email: '', phone: '', address: '', dob: '', gender: 'male' },
+      jobTitle: '',
       education: [{ institution: '', degree: '', major: '', graduationDate: '' }],
       experience: [],
       skills: { selected: [], other: '' },
@@ -89,7 +90,7 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <Accordion type="multiple" defaultValue={['personal-info', 'education', 'skills', 'goals']} className="w-full space-y-4">
+        <Accordion type="multiple" defaultValue={['personal-info', 'job-title', 'education', 'skills', 'goals']} className="w-full space-y-4">
           
           {/* Personal Information */}
           <AccordionItem value="personal-info">
@@ -125,6 +126,33 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
                     )}
                   />
                 </div>
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+
+          {/* Job Title */}
+          <AccordionItem value="job-title">
+            <Card>
+              <AccordionTrigger className="p-6 font-headline text-lg flex items-center">
+                <Briefcase className="mr-2 h-5 w-5" /> Job Application
+              </AccordionTrigger>
+              <AccordionContent className="p-6 pt-0">
+                <FormField
+                  control={form.control}
+                  name="jobTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Job Title You're Applying For</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Software Engineer, Project Manager" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Specify the role you are interested in. This helps the AI tailor your CV.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </AccordionContent>
             </Card>
           </AccordionItem>

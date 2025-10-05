@@ -20,6 +20,7 @@ const processCvData = (data: CvFormValues, userId: string) => {
 
   const aiInput = {
     personalInfo: data.personalInfo,
+    jobTitle: data.jobTitle,
     education: data.education,
     experience: data.experience,
     skills: allSkills,

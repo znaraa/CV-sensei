@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: 'REPLACE_WITH_YOUR_FIREBASE_API_KEY',
-  authDomain: 'REPLACE_WITH_YOUR_FIREBASE_AUTH_DOMAIN',
-  projectId: 'REPLACE_WITH_YOUR_FIREBASE_PROJECT_ID',
-  storageBucket: 'REPLACE_WITH_YOUR_FIREBASE_STORAGE_BUCKET',
-  messagingSenderId: 'REPLACE_WITH_YOUR_FIREBASE_MESSAGING_SENDER_ID',
-  appId: 'REPLACE_WITH_YOUR_FIREBASE_APP_ID'
+  "projectId": "studio-4680325009-17497",
+  "appId": "1:437282757897:web:905a66cb0bc5e362d107d8",
+  "apiKey": "AIzaSyDpuUtoaT4D11klFqLNA3WS8Eq3zQPh2fM",
+  "authDomain": "studio-4680325009-17497.firebaseapp.com",
+  "measurementId": "",
+  "messagingSenderId": "437282757897"
 };
 
 // Initialize Firebase

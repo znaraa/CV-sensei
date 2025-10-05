@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { PlusCircle, Trash2, Loader2, Briefcase } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2, Briefcase, User, GraduationCap, Building2, Lightbulb, Target } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createCvAction, updateCvAction } from '@/actions/cv';
 import { useAuth } from '@/hooks/use-auth';
@@ -95,7 +95,10 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
           {/* Personal Information */}
           <AccordionItem value="personal-info">
              <Card>
-              <AccordionTrigger className="p-6 font-headline text-lg">Personal Information</AccordionTrigger>
+              <AccordionTrigger className="p-6 font-headline text-lg">
+                <User className="mr-2 h-5 w-5" />
+                Personal Information
+              </AccordionTrigger>
               <AccordionContent className="p-6 pt-0">
                 <div className="space-y-4">
                   <FormField control={form.control} name="personalInfo.name" render={({ field }) => (<FormItem><FormLabel>Full Name</FormLabel><FormControl><Input placeholder="Taro Yamada" {...field} /></FormControl><FormMessage /></FormItem>)} />
@@ -133,7 +136,7 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
           {/* Job Title */}
           <AccordionItem value="job-title">
             <Card>
-              <AccordionTrigger className="p-6 font-headline text-lg flex items-center">
+              <AccordionTrigger className="p-6 font-headline text-lg">
                 <Briefcase className="mr-2 h-5 w-5" /> Job Application
               </AccordionTrigger>
               <AccordionContent className="p-6 pt-0">
@@ -160,7 +163,10 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
           {/* Education */}
           <AccordionItem value="education">
             <Card>
-              <AccordionTrigger className="p-6 font-headline text-lg">Education</AccordionTrigger>
+              <AccordionTrigger className="p-6 font-headline text-lg">
+                <GraduationCap className="mr-2 h-5 w-5" />
+                Education
+              </AccordionTrigger>
               <AccordionContent className="p-6 pt-0">
                 {educationFields.map((field, index) => (
                   <div key={field.id} className="p-4 border rounded-lg mb-4 space-y-4 relative">
@@ -180,7 +186,10 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
           {/* Work Experience */}
           <AccordionItem value="experience">
             <Card>
-              <AccordionTrigger className="p-6 font-headline text-lg">Work Experience (Optional)</AccordionTrigger>
+              <AccordionTrigger className="p-6 font-headline text-lg">
+                <Building2 className="mr-2 h-5 w-5" />
+                Work Experience (Optional)
+              </AccordionTrigger>
               <AccordionContent className="p-6 pt-0">
                 {experienceFields.map((field, index) => (
                   <div key={field.id} className="p-4 border rounded-lg mb-4 space-y-4 relative">
@@ -203,7 +212,10 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
           {/* Skills */}
           <AccordionItem value="skills">
             <Card>
-              <AccordionTrigger className="p-6 font-headline text-lg">Skills</AccordionTrigger>
+               <AccordionTrigger className="p-6 font-headline text-lg">
+                <Lightbulb className="mr-2 h-5 w-5" />
+                Skills
+              </AccordionTrigger>
               <AccordionContent className="p-6 pt-0">
                 <FormField
                   control={form.control}
@@ -255,7 +267,10 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
           {/* Career Goals */}
           <AccordionItem value="goals">
             <Card>
-              <AccordionTrigger className="p-6 font-headline text-lg">Career Goals</AccordionTrigger>
+              <AccordionTrigger className="p-6 font-headline text-lg">
+                <Target className="mr-2 h-5 w-5" />
+                Career Goals
+              </AccordionTrigger>
               <AccordionContent className="p-6 pt-0">
                 <FormField
                   control={form.control}
@@ -293,3 +308,5 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
     </Form>
   );
 }
+
+    

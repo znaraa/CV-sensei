@@ -25,6 +25,7 @@ const processCvData = (data: CvFormValues, userId: string) => {
     education: data.education,
     experience: data.experience,
     skills: allSkills,
+    certifications: data.certifications,
     goals: data.goals,
     personalInterests: data.personalInterests,
   };

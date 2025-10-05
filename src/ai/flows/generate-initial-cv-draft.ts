@@ -35,6 +35,10 @@ const GenerateInitialCvDraftInputSchema = z.object({
     responsibilities: z.string().describe('The responsibilities held at the job.'),
   })).describe('Work experience of the user.'),
   skills: z.array(z.string()).describe('Skills of the user.'),
+  certifications: z.array(z.object({
+    name: z.string().describe('The name of the certification.'),
+    date: z.string().describe('The date the certification was obtained.'),
+  })).optional().describe('Certifications of the user.'),
   goals: z.string().describe('Career goals of the user.'),
   personalInterests: z.string().optional().describe('Personal interests, hobbies, and personality traits of the user.'),
 });
@@ -86,6 +90,13 @@ const generateCvDraftPrompt = ai.definePrompt({
   {{/each}}
 
   Skills: {{skills}}
+
+  {{#if certifications}}
+  Certifications:
+  {{#each certifications}}
+  - {{{name}}} ({{{date}}})
+  {{/each}}
+  {{/if}}
 
   Career Goals: {{{goals}}}
 

@@ -30,6 +30,12 @@ const experienceSchema = z.object({
   responsibilities: z.string().min(1, 'Responsibilities are required'),
 });
 
+const certificationSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, 'Certification name is required'),
+  date: z.string().min(1, 'Date is required'),
+});
+
 export const cvSchema = z.object({
   personalInfo: z.object({
     name: z.string().min(1, 'Full name is required'),
@@ -46,6 +52,7 @@ export const cvSchema = z.object({
     selected: z.array(z.string()),
     other: z.string().optional(),
   }),
+  certifications: z.array(certificationSchema).optional(),
   goals: z.string().min(1, 'Career goals are required'),
   personalInterests: z.string().optional(),
 });

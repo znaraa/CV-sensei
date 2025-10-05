@@ -79,6 +79,7 @@ export default function EditCvPage() {
         education: resume.education,
         experience: resume.experience,
         skills: resume.skills,
+        certifications: resume.certifications || [],
         goals: resume.goals,
         personalInterests: resume.personalInterests,
     };

@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { PlusCircle, Trash2, Loader2, Briefcase, User, GraduationCap, Building2, Lightbulb, Target, Wand2, Smile } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2, Briefcase, User, GraduationCap, Building2, Lightbulb, Target, Wand2, Smile, Award } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createCvAction, updateCvAction, suggestSkillsAction } from '@/actions/cv';
 import { useAuth } from '@/hooks/use-auth';
@@ -43,6 +43,7 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
       education: [{ institution: '', degree: '', major: '', graduationDate: '' }],
       experience: [],
       skills: { selected: [], other: '' },
+      certifications: [],
       goals: '',
       personalInterests: '',
     },
@@ -58,6 +59,11 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
   const { fields: experienceFields, append: appendExperience, remove: removeExperience } = useFieldArray({
     control: form.control,
     name: 'experience',
+  });
+  
+  const { fields: certificationFields, append: appendCertification, remove: removeCertification } = useFieldArray({
+    control: form.control,
+    name: 'certifications',
   });
   
   const handleSuggestSkills = async () => {
@@ -346,6 +352,29 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
                       </div>
                    </div>
                 )}
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+          
+          {/* Certifications */}
+          <AccordionItem value="certifications">
+            <Card>
+              <AccordionTrigger className="p-6 font-headline text-lg">
+                <div className="flex items-center">
+                  <Award className="mr-2 h-5 w-5" />
+                  <span>Certifications (Optional)</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-6 pt-0">
+                {certificationFields.map((field, index) => (
+                  <div key={field.id} className="p-4 border rounded-lg mb-4 space-y-4 relative">
+                     <h4 className="font-semibold">Certification #{index + 1}</h4>
+                     <FormField control={form.control} name={`certifications.${index}.name`} render={({ field }) => (<FormItem><FormLabel>Certification Name</FormLabel><FormControl><Input placeholder="e.g., Driver's License" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                     <FormField control={form.control} name={`certifications.${index}.date`} render={({ field }) => (<FormItem><FormLabel>Date Obtained</FormLabel><FormControl><Input placeholder="e.g., June 2021" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                     <Button type="button" variant="destructive" size="sm" onClick={() => removeCertification(index)} className="absolute top-4 right-4"><Trash2 className="w-4 h-4 mr-1" /> Remove</Button>
+                  </div>
+                ))}
+                <Button type="button" variant="outline" size="sm" onClick={() => appendCertification({ name: '', date: '' })}><PlusCircle className="w-4 h-4 mr-1"/> Add Certification</Button>
               </AccordionContent>
             </Card>
           </AccordionItem>

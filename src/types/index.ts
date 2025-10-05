@@ -31,6 +31,12 @@ export type Skills = {
   other: string;
 };
 
+export type Certification = {
+  id: string;
+  name: string;
+  date: string;
+};
+
 export type Resume = {
   id?: string;
   userId: string;
@@ -39,6 +45,7 @@ export type Resume = {
   education: Omit<Education, 'id'>[];
   experience: Omit<Experience, 'id'>[];
   skills: Skills;
+  certifications?: Omit<Certification, 'id'>[];
   goals: string;
   personalInterests?: string;
   rirekisho?: string;

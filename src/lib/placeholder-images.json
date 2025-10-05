@@ -1,3 +1,16 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-background",
+      "description": "A person writing at a clean desk with a laptop",
+      "imageUrl": "https://images.unsplash.com/photo-1644185744493-3b1076b21dbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkZXNrJTIwbGFwdG9wfGVufDB8fHx8MTc1OTY0NTkzNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "desk laptop"
+    },
+    {
+      "id": "cv-card-placeholder",
+      "description": "Abstract pattern for a CV card background",
+      "imageUrl": "https://images.unsplash.com/photo-1482053450283-3e0b78b09a70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhYnN0cmFjdCUyMHBhdHRlcm58ZW58MHx8fHwxNzU5NjM1NjM2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract pattern"
+    }
+  ]
 }

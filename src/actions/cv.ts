@@ -5,6 +5,7 @@ import { generateInitialCvDraft } from "@/ai/flows/generate-initial-cv-draft";
 import { addResume, updateResume, getResume, deleteResume } from "@/lib/firestore";
 import { cvSchema, CvFormValues } from "@/schemas/cv";
 import { SKILL_OPTIONS } from '@/schemas/cv';
+import { suggestSkillsFromJobTitle } from '@/ai/flows/suggest-skills-from-job-title';
 
 type ActionResult = {
   success: boolean;
@@ -118,5 +119,20 @@ export async function deleteCvAction(
   } catch (error: any) {
     console.error("Error deleting CV:", error);
     return { success: false, message: error.message || "Failed to delete CV." };
+  }
+}
+
+
+export async function suggestSkillsAction(jobTitle: string): Promise<{ success: boolean; skills?: string[]; message: string; }> {
+  if (!jobTitle) {
+    return { success: false, message: 'Job title is required.' };
+  }
+
+  try {
+    const result = await suggestSkillsFromJobTitle({ jobTitle });
+    return { success: true, skills: result.skills, message: 'Skills suggested successfully.' };
+  } catch (error: any) {
+    console.error('Error suggesting skills:', error);
+    return { success: false, message: error.message || 'Failed to suggest skills.' };
   }
 }

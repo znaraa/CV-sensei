@@ -36,7 +36,7 @@ const prompt = ai.definePrompt({
   name: 'suggestSkillsFromJobTitlePrompt',
   input: {schema: SuggestSkillsFromJobTitleInputSchema},
   output: {schema: SuggestSkillsFromJobTitleOutputSchema},
-  prompt: `Suggest a list of relevant skills for the following job title:\n\nJob Title: {{{jobTitle}}}`,
+  prompt: `Suggest a list of 5 to 10 relevant skills for the following job title. Return only skills, no additional text or formatting:\n\nJob Title: {{{jobTitle}}}`,
 });
 
 const suggestSkillsFromJobTitleFlow = ai.defineFlow(

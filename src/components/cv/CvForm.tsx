@@ -1,6 +1,6 @@
 "use client";
 
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -13,12 +13,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { PlusCircle, Trash2, Loader2, Briefcase, User, GraduationCap, Building2, Lightbulb, Target } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2, Briefcase, User, GraduationCap, Building2, Lightbulb, Target, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { createCvAction, updateCvAction } from '@/actions/cv';
+import { createCvAction, updateCvAction, suggestSkillsAction } from '@/actions/cv';
 import { useAuth } from '@/hooks/use-auth';
 import type { Resume } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 
 interface CvFormProps {
   resumeId?: string;
@@ -30,6 +31,8 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [isSuggestingSkills, setIsSuggestingSkills] = useState(false);
+  const [suggestedSkills, setSuggestedSkills] = useState<string[]>([]);
   const isEditing = !!resumeId;
 
   const form = useForm<CvFormValues>({
@@ -44,6 +47,8 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
     },
   });
 
+  const jobTitle = useWatch({ control: form.control, name: 'jobTitle' });
+
   const { fields: educationFields, append: appendEducation, remove: removeEducation } = useFieldArray({
     control: form.control,
     name: 'education',
@@ -53,6 +58,51 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
     control: form.control,
     name: 'experience',
   });
+  
+  const handleSuggestSkills = async () => {
+    if (!jobTitle) {
+      toast({
+        variant: "destructive",
+        title: "Job Title Required",
+        description: "Please enter a job title to get skill suggestions.",
+      });
+      return;
+    }
+    setIsSuggestingSkills(true);
+    setSuggestedSkills([]);
+    try {
+      const result = await suggestSkillsAction(jobTitle);
+      if (result.success && result.skills) {
+        setSuggestedSkills(result.skills);
+        toast({
+          title: "Skills Suggested",
+          description: "Click on a skill to add it to your list.",
+        });
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error: any) {
+       toast({
+        variant: "destructive",
+        title: "Failed to Suggest Skills",
+        description: error.message || "An unexpected error occurred.",
+      });
+    } finally {
+      setIsSuggestingSkills(false);
+    }
+  };
+
+  const addSuggestedSkill = (skill: string) => {
+    const currentOtherSkills = form.getValues('skills.other') || '';
+    const otherSkillsArray = currentOtherSkills.split(',').map(s => s.trim()).filter(Boolean);
+    
+    if (!otherSkillsArray.includes(skill) && !SKILL_OPTIONS.includes(skill)) {
+      const newOtherSkills = [...otherSkillsArray, skill].join(', ');
+      form.setValue('skills.other', newOtherSkills, { shouldValidate: true });
+    }
+    setSuggestedSkills(prev => prev.filter(s => s !== skill));
+  };
+
 
   const onSubmit = async (data: CvFormValues) => {
     if (!user) {
@@ -151,11 +201,17 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Job Title You're Applying For</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., Software Engineer, Project Manager" {...field} />
-                      </FormControl>
+                      <div className="flex items-center gap-2">
+                        <FormControl>
+                          <Input placeholder="e.g., Software Engineer, Project Manager" {...field} />
+                        </FormControl>
+                         <Button type="button" onClick={handleSuggestSkills} disabled={isSuggestingSkills}>
+                           {isSuggestingSkills ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                          <span className="ml-2 hidden sm:inline">Suggest Skills</span>
+                        </Button>
+                      </div>
                       <FormDescription>
-                        Specify the role you are interested in. This helps the AI tailor your CV.
+                        Specify the role you are interested in. This helps the AI tailor your CV and suggest skills.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -266,11 +322,29 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
                     <FormItem>
                       <FormLabel>Other Skills</FormLabel>
                       <FormControl><Input placeholder="Comma-separated skills, e.g., Figma, SQL" {...field} /></FormControl>
-                      <FormDescription>Add any other relevant skills not listed above.</FormDescription>
+                      <FormDescription>Add any other relevant skills not listed above, or use the suggestion feature.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {suggestedSkills.length > 0 && (
+                   <div className="mt-4">
+                      <p className="text-sm font-medium mb-2">Suggested Skills (click to add):</p>
+                      <div className="flex flex-wrap gap-2">
+                        {suggestedSkills.map((skill) => (
+                          <Badge 
+                            key={skill}
+                            variant="secondary" 
+                            className="cursor-pointer hover:bg-primary/20"
+                            onClick={() => addSuggestedSkill(skill)}
+                          >
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                   </div>
+                )}
               </AccordionContent>
             </Card>
           </AccordionItem>

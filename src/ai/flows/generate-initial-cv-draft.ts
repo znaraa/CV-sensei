@@ -41,13 +41,13 @@ const GenerateInitialCvDraftInputSchema = z.object({
   })).optional().describe('Certifications of the user.'),
   goals: z.string().describe('Career goals of the user.'),
   personalInterests: z.string().optional().describe('Personal interests, hobbies, and personality traits of the user.'),
+  docType: z.enum(['rirekisho', 'shokumuKeirekisho', 'both']).describe('The type of document to generate.'),
 });
 
 export type GenerateInitialCvDraftInput = z.infer<typeof GenerateInitialCvDraftInputSchema>;
 
 const GenerateInitialCvDraftOutputSchema = z.object({
-  rirekisho: z.string().describe('The generated 履歴書 (Rirekisho) draft.'),
-  shokumuKeirekisho: z.string().describe('The generated 職務経歴書 (Shokumu Keirekisho) draft.'),
+  document: z.string().describe('The generated document draft.'),
 });
 
 export type GenerateInitialCvDraftOutput = z.infer<typeof GenerateInitialCvDraftOutputSchema>;
@@ -62,7 +62,7 @@ const generateCvDraftPrompt = ai.definePrompt({
   output: {schema: GenerateInitialCvDraftOutputSchema},
   prompt: `You are an expert in creating 履歴書 (Rirekisho) and 職務経歴書 (Shokumu Keirekisho) in the Japanese format.
 
-  Based on the following information, generate a draft of both documents for a person applying for the position of {{{jobTitle}}}.
+  Based on the following information, generate a draft of the requested document ({{docType}}) for a person applying for the position of {{{jobTitle}}}.
 
   Personal Information:
   Name: {{{personalInfo.name}}}
@@ -104,13 +104,12 @@ const generateCvDraftPrompt = ai.definePrompt({
   Personal Interests & Personality: {{{personalInterests}}}
   {{/if}}
 
-  Please provide the 履歴書 (Rirekisho) and 職務経歴書 (Shokumu Keirekisho) drafts in a well-formatted, professional manner.
+  Please provide the draft for {{docType}} in a well-formatted, professional manner.
 
   Make sure to use bullet points for skills and responsibilities.
 
-  The output must be returned as a JSON object with the fields:
-  - rirekisho: The generated 履歴書 (Rirekisho) draft.
-  - shokumuKeirekisho: The generated 職務経歴書 (Shokumu Keirekisho) draft.
+  The output must be returned as a JSON object with the field:
+  - document: The generated draft for {{docType}}.
   `,
 });
 

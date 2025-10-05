@@ -10,6 +10,7 @@ import {
   deleteDoc,
   onSnapshot,
   orderBy,
+  Timestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Resume } from '@/types';
@@ -19,17 +20,24 @@ const resumesCollection = collection(db, 'resumes');
 export const addResume = async (resumeData: Omit<Resume, 'id' | 'createdAt' | 'updatedAt'>) => {
   const docRef = await addDoc(resumesCollection, {
     ...resumeData,
-    title: `CV for ${resumeData.personalInfo.name}`,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
   return docRef.id;
 };
 
-export const updateResume = async (id: string, resumeData: Partial<Resume>) => {
+export const updateResume = async (id: string, resumeData: Partial<Omit<Resume, 'id' | 'createdAt' | 'updatedAt'>>) => {
   const docRef = doc(db, 'resumes', id);
   await updateDoc(docRef, {
     ...resumeData,
+    updatedAt: serverTimestamp(),
+  });
+};
+
+export const updateResumeDocuments = async (id: string, documents: { rirekisho?: string; shokumuKeirekisho?: string }) => {
+  const docRef = doc(db, 'resumes', id);
+  await updateDoc(docRef, {
+    ...documents,
     updatedAt: serverTimestamp(),
   });
 };
@@ -50,16 +58,16 @@ export const getResumes = (userId: string, onUpdate: (resumes: Resume[]) => void
   return unsubscribe;
 };
 
-export const getResume = async (id: string): Promise<Resume | null> => {
+export const getResume = (id: string, onUpdate: (resume: Resume | null) => void) => {
   const docRef = doc(db, 'resumes', id);
-  const docSnap = await getDoc(docRef);
+  
+  const unsubscribe = onSnapshot(docRef, (docSnap) => {
+    if (docSnap.exists()) {
+      onUpdate({ id: docSnap.id, ...docSnap.data() } as Resume);
+    } else {
+      onUpdate(null);
+    }
+  });
 
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-    // For backwards compatibility with old data that might not have a title
-    const title = data.title || `CV for ${data.personalInfo.name}`;
-    return { id: docSnap.id, ...data, title } as Resume;
-  } else {
-    return null;
-  }
+  return unsubscribe;
 };

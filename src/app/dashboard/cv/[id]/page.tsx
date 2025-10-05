@@ -10,14 +10,52 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Printer, Edit, FileWarning } from 'lucide-react';
+import { Printer, Edit, FileWarning, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { generateDocumentAction } from '@/actions/cv';
+import { useToast } from '@/hooks/use-toast';
 
-function GeneratedCvView({ resume }: { resume: Resume }) {
+function GeneratedCvView({ resume, cvId }: { resume: Resume, cvId: string }) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isGeneratingRirekisho, setIsGeneratingRirekisho] = useState(false);
+  const [isGeneratingShokumu, setIsGeneratingShokumu] = useState(false);
 
   const handlePrint = () => {
     window.print();
   };
+  
+  const handleGenerate = async (docType: 'rirekisho' | 'shokumuKeirekisho') => {
+    if (!user) return;
+    
+    if (docType === 'rirekisho') {
+      setIsGeneratingRirekisho(true);
+    } else {
+      setIsGeneratingShokumu(true);
+    }
+    
+    const result = await generateDocumentAction(cvId, user.uid, docType);
+    
+    if (result.success) {
+      toast({
+        title: "Document Generated",
+        description: result.message,
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Generation Failed",
+        description: result.message,
+      });
+    }
+    
+    if (docType === 'rirekisho') {
+      setIsGeneratingRirekisho(false);
+    } else {
+      setIsGeneratingShokumu(false);
+    }
+  };
+
 
   return (
     <div className="space-y-6">
@@ -46,21 +84,43 @@ function GeneratedCvView({ resume }: { resume: Resume }) {
           </TabsList>
           <TabsContent value="rirekisho">
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="font-headline">履歴書 (Rirekisho)</CardTitle>
+                <Button size="sm" onClick={() => handleGenerate('rirekisho')} disabled={isGeneratingRirekisho} className="no-print">
+                  {isGeneratingRirekisho && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Generate Rirekisho
+                </Button>
               </CardHeader>
               <CardContent>
-                <pre className="whitespace-pre-wrap font-body text-sm leading-relaxed">{resume.rirekisho}</pre>
+                {resume.rirekisho ? (
+                   <pre className="whitespace-pre-wrap font-body text-sm leading-relaxed">{resume.rirekisho}</pre>
+                ) : (
+                  <div className="text-center py-10 text-muted-foreground">
+                    <p>Rirekisho has not been generated yet.</p>
+                    <p>Click the button above to generate it.</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="shokumuKeirekisho">
             <Card>
-              <CardHeader>
+               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="font-headline">職務経歴書 (Shokumu Keirekisho)</CardTitle>
+                 <Button size="sm" onClick={() => handleGenerate('shokumuKeirekisho')} disabled={isGeneratingShokumu} className="no-print">
+                  {isGeneratingShokumu && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Generate Shokumu Keirekisho
+                </Button>
               </CardHeader>
               <CardContent>
-                <pre className="whitespace-pre-wrap font-body text-sm leading-relaxed">{resume.shokumuKeirekisho}</pre>
+                 {resume.shokumuKeirekisho ? (
+                  <pre className="whitespace-pre-wrap font-body text-sm leading-relaxed">{resume.shokumuKeirekisho}</pre>
+                ) : (
+                  <div className="text-center py-10 text-muted-foreground">
+                    <p>Shokumu Keirekisho has not been generated yet.</p>
+                    <p>Click the button above to generate it.</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -102,20 +162,22 @@ export default function CvPage() {
 
   useEffect(() => {
     if (user && cvId) {
-      getResume(cvId)
-        .then((data) => {
-          if (data && data.userId === user.uid) {
-            setResume(data);
-          } else if (data) {
-            setError("You do not have permission to view this CV.");
-          } else {
-            setError("CV not found.");
-          }
-        })
-        .catch(() => setError("Failed to load CV."))
-        .finally(() => setLoading(false));
+      const unsubscribe = getResume(cvId, (data) => {
+        if (data && data.userId === user.uid) {
+          setResume(data);
+        } else if (data) {
+          setError("You do not have permission to view this CV.");
+        } else {
+          setError("CV not found.");
+        }
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    } else if (!user && !loading) {
+      router.push('/login');
     }
-  }, [user, cvId]);
+  }, [user, cvId, loading, router]);
+
 
   if (loading) {
     return <div className="container mx-auto p-4 sm:p-6 lg:p-8"><CvViewSkeleton /></div>;
@@ -137,7 +199,7 @@ export default function CvPage() {
   if (resume) {
     return (
       <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-        <GeneratedCvView resume={resume} />
+        <GeneratedCvView resume={resume} cvId={cvId} />
       </div>
     );
   }

@@ -13,9 +13,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { PlusCircle, Trash2, Loader2, Briefcase, User, GraduationCap, Building2, Lightbulb, Target, Wand2, Smile, Award } from 'lucide-react';
+import { PlusCircle, Trash2, Loader2, Briefcase, User, GraduationCap, Building2, Lightbulb, Target, Wand2, Smile, Award, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { createCvAction, updateCvAction, suggestSkillsAction } from '@/actions/cv';
+import { saveCvAction, suggestSkillsAction } from '@/actions/cv';
 import { useAuth } from '@/hooks/use-auth';
 import type { Resume } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -118,19 +118,20 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
     }
     setLoading(true);
 
-    const action = isEditing
-      ? updateCvAction(resumeId, user.uid, data)
-      // @ts-ignore
-      : createCvAction(user.uid, data);
+    const action = saveCvAction(user.uid, data, resumeId);
 
     try {
       const result = await action;
       if (result.success && result.id) {
         toast({
           title: `CV ${isEditing ? 'Updated' : 'Created'}!`,
-          description: `Your CV has been successfully ${isEditing ? 'updated' : 'created'}.`,
+          description: `Your CV has been successfully ${isEditing ? 'updated' : 'created'}. You can now generate the documents.`,
         });
-        router.push(`/dashboard/cv/${result.id}`);
+        if (!isEditing) {
+          router.push(`/dashboard/cv/${result.id}/edit`);
+        } else {
+          router.push(`/dashboard/cv/${result.id}`);
+        }
       } else {
         throw new Error(result.message);
       }
@@ -140,7 +141,8 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
         title: `Error ${isEditing ? 'Updating' : 'Creating'} CV`,
         description: error.message || 'An unexpected error occurred.',
       });
-      setLoading(false);
+    } finally {
+        setLoading(false);
     }
   };
 
@@ -442,10 +444,13 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {isEditing ? 'Updating...' : 'Generating...'}
+                Saving...
               </>
             ) : (
-              isEditing ? 'Update & Regenerate CV' : 'Generate CV'
+               <>
+                <Save className="mr-2 h-4 w-4" />
+                {isEditing ? 'Save Changes' : 'Create CV'}
+               </>
             )}
           </Button>
         </div>

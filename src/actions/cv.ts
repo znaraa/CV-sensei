@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { generateInitialCvDraft } from "@/ai/flows/generate-initial-cv-draft";
-import { addResume, updateResume, getResume, deleteResume } from "@/lib/firestore";
+import { addResume, updateResume, getResume, deleteResume, updateResumeDocuments } from "@/lib/firestore";
 import { cvSchema, CvFormValues } from "@/schemas/cv";
 import { SKILL_OPTIONS } from '@/schemas/cv';
 import { suggestSkillsFromJobTitle } from '@/ai/flows/suggest-skills-from-job-title';
@@ -39,67 +39,65 @@ const processCvData = (data: CvFormValues, userId: string) => {
 };
 
 
-export async function createCvAction(
+export async function saveCvAction(
   userId: string,
-  data: CvFormValues
+  data: CvFormValues,
+  cvId?: string,
 ): Promise<ActionResult> {
   try {
     const validatedData = cvSchema.safeParse(data);
     if (!validatedData.success) {
       return { success: false, message: "Invalid form data." };
     }
-
-    const { aiInput, firestoreData } = processCvData(validatedData.data, userId);
     
-    const aiResult = await generateInitialCvDraft(aiInput);
+    const { firestoreData } = processCvData(validatedData.data, userId);
 
-    const fullResumeData = {
-      ...firestoreData,
-      ...aiResult,
-    };
-    
-    // @ts-ignore
-    const newId = await addResume(fullResumeData);
-
-    revalidatePath('/dashboard');
-    return { success: true, message: "CV created successfully!", id: newId };
+    if (cvId) {
+      await updateResume(cvId, firestoreData);
+      revalidatePath('/dashboard');
+      revalidatePath(`/dashboard/cv/${cvId}`);
+      return { success: true, message: "CV data saved successfully!", id: cvId };
+    } else {
+      // @ts-ignore
+      const newId = await addResume(firestoreData);
+      revalidatePath('/dashboard');
+      return { success: true, message: "CV created successfully!", id: newId };
+    }
   } catch (error: any) {
-    console.error("Error creating CV:", error);
-    return { success: false, message: error.message || "Failed to create CV." };
+    console.error("Error saving CV:", error);
+    return { success: false, message: error.message || "Failed to save CV data." };
   }
 }
 
-export async function updateCvAction(
+export async function generateDocumentAction(
   cvId: string,
   userId: string,
-  data: CvFormValues
+  docType: 'rirekisho' | 'shokumuKeirekisho'
 ): Promise<ActionResult> {
-  try {
-    const validatedData = cvSchema.safeParse(data);
-    if (!validatedData.success) {
-      return { success: false, message: "Invalid form data." };
+   try {
+    const resume = await getResume(cvId);
+    if (!resume || resume.userId !== userId) {
+      return { success: false, message: "CV not found or permission denied." };
     }
 
-    const { aiInput, firestoreData } = processCvData(validatedData.data, userId);
-
-    const aiResult = await generateInitialCvDraft(aiInput);
-
-    const fullResumeData = {
-      ...firestoreData,
-      ...aiResult,
-    };
+    const { aiInput } = processCvData(resume as CvFormValues, userId);
     
-    // @ts-ignore
-    await updateResume(cvId, fullResumeData);
+    const aiResult = await generateInitialCvDraft({ ...aiInput, docType });
 
-    revalidatePath('/dashboard');
+    const updateData = docType === 'rirekisho' 
+      ? { rirekisho: aiResult.document } 
+      : { shokumuKeirekisho: aiResult.document };
+
+    await updateResumeDocuments(cvId, updateData);
+
     revalidatePath(`/dashboard/cv/${cvId}`);
-    return { success: true, message: "CV updated successfully!", id: cvId };
+    return { success: true, message: `${docType === 'rirekisho' ? 'Rirekisho' : 'Shokumu Keirekisho'} generated successfully!`, id: cvId };
   } catch (error: any) {
-    console.error("Error updating CV:", error);
-    return { success: false, message: error.message || "Failed to update CV." };
+    console.error(`Error generating ${docType}:`, error);
+    return { success: false, message: error.message || `Failed to generate ${docType}.` };
   }
 }
+
 
 export async function deleteCvAction(
   cvId: string,

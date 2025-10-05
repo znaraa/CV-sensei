@@ -10,7 +10,7 @@ export type PersonalInfo = {
 };
 
 export type Education = {
-  id: string;
+  id?: string;
   institution: string;
   degree: string;
   major: string;
@@ -18,7 +18,7 @@ export type Education = {
 };
 
 export type Experience = {
-  id: string;
+  id?: string;
   company: string;
   position: string;
   startDate: string;
@@ -28,11 +28,11 @@ export type Experience = {
 
 export type Skills = {
   selected: string[];
-  other: string;
+  other?: string;
 };
 
 export type Certification = {
-  id: string;
+  id?: string;
   name: string;
   date: string;
 };
@@ -42,10 +42,10 @@ export type Resume = {
   userId: string;
   personalInfo: PersonalInfo;
   jobTitle: string;
-  education: Omit<Education, 'id'>[];
-  experience: Omit<Experience, 'id'>[];
+  education: Education[];
+  experience: Experience[];
   skills: Skills;
-  certifications?: Omit<Certification, 'id'>[];
+  certifications?: Certification[];
   goals: string;
   personalInterests?: string;
   rirekisho?: string;

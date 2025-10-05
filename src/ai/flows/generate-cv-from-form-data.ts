@@ -17,6 +17,8 @@ const GenerateCvFromFormDataInputSchema = z.object({
     email: z.string().email().describe('The email address of the user.'),
     phone: z.string().describe('The phone number of the user.'),
     address: z.string().describe('The address of the user.'),
+    dob: z.string().describe('The date of birth of the user.'),
+    gender: z.string().describe('The gender of the user.'),
   }).describe('Personal information of the user'),
   education: z.array(z.object({
     institution: z.string().describe('The name of the educational institution.'),
@@ -54,7 +56,7 @@ const generateCvPrompt = ai.definePrompt({
   output: {schema: GenerateCvFromFormDataOutputSchema},
   prompt: `You are an expert in creating 履歴書 (Rirekisho) and 職務経歴書 (Shokumu Keirekisho) in the Japanese format.\n
   Based on the following information, generate a draft of both documents.\n
-  Personal Information:\n  Name: {{{personalInfo.name}}}\n  Email: {{{personalInfo.email}}}\n  Phone: {{{personalInfo.phone}}}\n  Address: {{{personalInfo.address}}}\n
+  Personal Information:\n  Name: {{{personalInfo.name}}}\n  Email: {{{personalInfo.email}}}\n  Phone: {{{personalInfo.phone}}}\n  Address: {{{personalInfo.address}}}\n  Date of Birth: {{{personalInfo.dob}}}\n  Gender: {{{personalInfo.gender}}}\n
   Education:\n  {{#each education}}\n  Institution: {{{institution}}}\n  Degree: {{{degree}}}\n  Major: {{{major}}}\n  Graduation Date: {{{graduationDate}}}\n  {{/each}}\n
   Work Experience:\n  {{#each experience}}\n  Company: {{{company}}}\n  Position: {{{position}}}\n  Start Date: {{{startDate}}}\n  End Date: {{{endDate}}}\n  Responsibilities: {{{responsibilities}}}\n  {{/each}}\n
   Skills: {{skills}}\n

@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { createCvAction, updateCvAction } from '@/actions/cv';
 import { useAuth } from '@/hooks/use-auth';
 import type { Resume } from '@/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface CvFormProps {
   resumeId?: string;
@@ -34,7 +35,7 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
   const form = useForm<CvFormValues>({
     resolver: zodResolver(cvSchema),
     defaultValues: defaultValues || {
-      personalInfo: { name: '', email: '', phone: '', address: '' },
+      personalInfo: { name: '', email: '', phone: '', address: '', dob: '', gender: 'male' },
       education: [{ institution: '', degree: '', major: '', graduationDate: '' }],
       experience: [],
       skills: { selected: [], other: '' },
@@ -100,6 +101,29 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
                   <FormField control={form.control} name="personalInfo.email" render={({ field }) => (<FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="taro.yamada@example.com" {...field} /></FormControl><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="personalInfo.phone" render={({ field }) => (<FormItem><FormLabel>Phone</FormLabel><FormControl><Input placeholder="080-1234-5678" {...field} /></FormControl><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="personalInfo.address" render={({ field }) => (<FormItem><FormLabel>Address</FormLabel><FormControl><Input placeholder="Tokyo, Japan" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                  <FormField control={form.control} name="personalInfo.dob" render={({ field }) => (<FormItem><FormLabel>Date of Birth</FormLabel><FormControl><Input placeholder="YYYY-MM-DD" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                  <FormField
+                    control={form.control}
+                    name="personalInfo.gender"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Gender</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a gender" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </AccordionContent>
             </Card>

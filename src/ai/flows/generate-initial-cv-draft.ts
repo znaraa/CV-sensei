@@ -17,6 +17,8 @@ const GenerateInitialCvDraftInputSchema = z.object({
     email: z.string().email().describe('The email address of the user.'),
     phone: z.string().describe('The phone number of the user.'),
     address: z.string().describe('The address of the user.'),
+    dob: z.string().describe('The date of birth of the user.'),
+    gender: z.string().describe('The gender of the user.'),
   }).describe('Personal information of the user'),
   education: z.array(z.object({
     institution: z.string().describe('The name of the educational institution.'),
@@ -61,6 +63,8 @@ const generateCvDraftPrompt = ai.definePrompt({
   Email: {{{personalInfo.email}}}
   Phone: {{{personalInfo.phone}}}
   Address: {{{personalInfo.address}}}
+  Date of Birth: {{{personalInfo.dob}}}
+  Gender: {{{personalInfo.gender}}}
 
   Education:
   {{#each education}}

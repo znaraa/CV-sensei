@@ -36,6 +36,8 @@ export const cvSchema = z.object({
     email: z.string().email('Invalid email address'),
     phone: z.string().min(1, 'Phone number is required'),
     address: z.string().min(1, 'Address is required'),
+    dob: z.string().min(1, 'Date of birth is required'),
+    gender: z.enum(['male', 'female', 'other']),
   }),
   education: z.array(educationSchema).min(1, 'At least one education entry is required'),
   experience: z.array(experienceSchema),

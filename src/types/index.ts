@@ -5,6 +5,8 @@ export type PersonalInfo = {
   email: string;
   phone: string;
   address: string;
+  dob: string;
+  gender: 'male' | 'female' | 'other';
 };
 
 export type Education = {

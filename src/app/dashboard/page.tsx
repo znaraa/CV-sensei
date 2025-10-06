@@ -74,7 +74,7 @@ function CvCard({ resume, userId }: { resume: Resume; userId: string }) {
         <CardHeader>
           <CardTitle className="font-headline text-xl flex items-center gap-2">
             <FileText className="w-5 h-5 text-accent" />
-            CV for {resume.personalInfo.name}
+            {resume.jobTitle}
           </CardTitle>
           <CardDescription>Created for {resume.personalInfo.name}</CardDescription>
         </CardHeader>

@@ -62,7 +62,7 @@ function GeneratedCvView({ resume, cvId }: { resume: Resume, cvId: string }) {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-headline text-3xl font-bold text-foreground">CV for {resume.personalInfo.name}</h1>
-          <p className="text-muted-foreground mt-1">Generated documents for {resume.personalInfo.name}</p>
+          <p className="text-muted-foreground mt-1">Generated documents for {resume.jobTitle}</p>
         </div>
         <div className="flex gap-2 no-print">
           <Button variant="outline" asChild>

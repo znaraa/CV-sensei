@@ -5,7 +5,7 @@ import {
   where,
   serverTimestamp,
   doc,
-  getDoc,
+  getDoc as getDocSdk,
   updateDoc,
   deleteDoc,
   onSnapshot,
@@ -58,16 +58,24 @@ export const getResumes = (userId: string, onUpdate: (resumes: Resume[]) => void
   return unsubscribe;
 };
 
-export const getResume = (id: string, onUpdate: (resume: Resume | null) => void) => {
+export const getResume = (id: string, onUpdate?: (resume: Resume | null) => void) => {
   const docRef = doc(db, 'resumes', id);
-  
-  const unsubscribe = onSnapshot(docRef, (docSnap) => {
-    if (docSnap.exists()) {
-      onUpdate({ id: docSnap.id, ...docSnap.data() } as Resume);
-    } else {
-      onUpdate(null);
-    }
-  });
 
-  return unsubscribe;
+  if (onUpdate) {
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        onUpdate({ id: docSnap.id, ...docSnap.data() } as Resume);
+      } else {
+        onUpdate(null);
+      }
+    });
+    return unsubscribe;
+  }
+  
+  return getDocSdk(docRef).then(docSnap => {
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() } as Resume;
+    }
+    return null;
+  })
 };

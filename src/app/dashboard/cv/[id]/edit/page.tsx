@@ -40,18 +40,16 @@ export default function EditCvPage() {
 
   useEffect(() => {
     if (user && cvId) {
-      getResume(cvId)
-        .then((data) => {
-          if (data && data.userId === user.uid) {
-            setResume(data);
-          } else if (data) {
-            setError("You do not have permission to edit this CV.");
-          } else {
-            setError("CV not found.");
-          }
-        })
-        .catch(() => setError("Failed to load CV data."))
-        .finally(() => setLoading(false));
+      getResume(cvId, (data) => {
+        if (data && data.userId === user.uid) {
+          setResume(data);
+        } else if (data) {
+          setError("You do not have permission to edit this CV.");
+        } else {
+          setError("CV not found.");
+        }
+        setLoading(false);
+      });
     }
   }, [user, cvId]);
 

@@ -128,7 +128,7 @@ export default function CvForm({ resumeId, defaultValues }: CvFormProps) {
           description: `Your CV has been successfully ${isEditing ? 'updated' : 'created'}. You can now generate the documents.`,
         });
         if (!isEditing) {
-          router.push(`/dashboard/cv/${result.id}/edit`);
+          router.push(`/dashboard/cv/${result.id}`);
         } else {
           router.push(`/dashboard/cv/${result.id}`);
         }
